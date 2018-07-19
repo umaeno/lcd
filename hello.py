@@ -7,7 +7,7 @@ except ImportError:
     # Python3
     from urllib.request import urlopen
 
-os.environ["SDL_FBDEV"] = "/dev/fb1"
+os.environ["SDL_FBDEV"] = "/dev/fb0"
 pygame.init()
 
 def inverted(img):
@@ -17,7 +17,7 @@ def inverted(img):
    return inv
 
 # set up the window
-screen = pygame.display.set_mode((160, 124), 0, 32)
+screen = pygame.display.set_mode((160, 128), 0, 32)
 pygame.mouse.set_visible(0)
 #screen.fill((255, 255, 255))
 screen.fill((0, 0, 0))

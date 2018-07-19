@@ -1,6 +1,6 @@
 import pygame, sys, os
 from pygame.locals import *
-os.environ["SDL_FBDEV"] = "/dev/fb1"
+os.environ["SDL_FBDEV"] = "/dev/fb0"
 # Uncomment if you have a touch panel and find the X value for your device
 #os.environ["SDL_MOUSEDRV"] = "TSLIB"
 #os.environ["SDL_MOUSEDEV"] = "/dev/input/eventX"
@@ -8,7 +8,7 @@ os.environ["SDL_FBDEV"] = "/dev/fb1"
 pygame.init()
 
 # set up the window
-DISPLAYSURF = pygame.display.set_mode((160, 124), 0, 32)
+DISPLAYSURF = pygame.display.set_mode((160, 128), 0, 32)
 pygame.display.set_caption('Drawing')
 
 # set up the colors
