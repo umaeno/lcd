@@ -1,4 +1,4 @@
-import pygame, sys, os, time, datetime, io, json
+import pygame, sys, os, time, datetime, io, json, schedule
 from pygame.locals import *
 try:
     # Python2
@@ -56,6 +56,22 @@ def data_organizer(raw_api_dict):
     return data
 
 
+def data_update():
+    global data
+    print('data update')
+    currenttime = datetime.datetime.time(datetime.datetime.now())
+    str_time = currenttime.strftime("%I:%M:%S %p")
+    f = open('log.txt', 'a')
+    f.write(str_time + "\n")
+    f.close()
+    data = data_organizer(data_fetch(url_builder(cityid)))
+
+
+# First fetch
+cityid = 2172517  # Canberra AU    
+data = data_organizer(data_fetch(url_builder(cityid)))
+
+
 # set up the colors
 BLACK = (  0,   0,   0)
 WHITE = (255, 255, 255)
@@ -67,24 +83,10 @@ CYAN  = (  0, 255, 255)
 # set up the window
 screen = pygame.display.set_mode((160, 128), 0, 32)
 pygame.mouse.set_visible(0)
-#screen.fill((255, 255, 255))
-screen.fill(BLACK)
 
-cityid = 2172517  # Canberra AU
-data = data_organizer(data_fetch(url_builder(cityid)))
-
-basicfont = pygame.font.SysFont(None, 18)
-text = basicfont.render(data['sky_desc'], True, (100, 200, 100))
-textrect = text.get_rect()
-textrect.centerx = screen.get_rect().centerx
-textrect.centery = screen.get_rect().centery
-screen.blit(text, textrect)
-
-img_url = "http://openweathermap.org/img/w/" + data['icon'] + ".png"
-img_str = urlopen(img_url).read()
-img_file = io.BytesIO(img_str)
-img = pygame.image.load(img_file)
-screen.blit(img, (20, 20))
+print('scheduling')
+#schedule.every().hour.do(data_update)
+schedule.every().minute.do(data_update)
 
 while True:
     for event in pygame.event.get():
@@ -92,13 +94,32 @@ while True:
             pygame.quit()
             sys.exit()
 
-    currenttime = datetime.datetime.time(datetime.datetime.now())
+    # fill screen
+    screen.fill(BLACK)
+            
+    # show weather description
+    basicfont = pygame.font.SysFont(None, 18)
+    text = basicfont.render(data['sky_desc'], True, (100, 200, 100))
+    textrect = text.get_rect()
+    textrect.centerx = screen.get_rect().centerx
+    textrect.centery = screen.get_rect().centery
+    screen.blit(text, textrect)
 
+    # show icon
+    img_url = "http://openweathermap.org/img/w/" + data['icon'] + ".png"
+    img_str = urlopen(img_url).read()
+    img_file = io.BytesIO(img_str)
+    img = pygame.image.load(img_file)
+    screen.blit(img, (20, 20))
+
+    # show current time
+    currenttime = datetime.datetime.time(datetime.datetime.now())
     text = basicfont.render(currenttime.strftime("%I:%M %p"), 1, CYAN)
     textpos = text.get_rect(center=(screen.get_width()/2,80))
     screen.blit(text, textpos)
 
+    print('display updating')
     pygame.display.update()
 
+    schedule.run_pending()
     time.sleep(60)
-
