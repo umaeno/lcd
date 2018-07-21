@@ -85,8 +85,8 @@ screen = pygame.display.set_mode((160, 128), 0, 32)
 pygame.mouse.set_visible(0)
 
 print('scheduling')
-#schedule.every().hour.do(data_update)
-schedule.every().minute.do(data_update)
+schedule.every(30).minutes.do(data_update)
+#schedule.every().minute.do(data_update)
 
 while True:
     for event in pygame.event.get():
